@@ -1,6 +1,6 @@
 {
 	"name": "graphql-cost-guardian",
-	"version": "0.0.0-development",
+	"version": "1.0.0",
 	"description": "Analyze and limit the cost of GraphQL queries using configurable field costs",
 	"license": "MIT",
 	"repository": "mstuart/graphql-cost-guardian",
