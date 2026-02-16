@@ -1,0 +1,54 @@
+{
+	"name": "graphql-cost-guardian",
+	"version": "0.0.0-development",
+	"description": "Analyze and limit the cost of GraphQL queries using configurable field costs",
+	"license": "MIT",
+	"repository": "mstuart/graphql-cost-guardian",
+	"author": {
+		"name": "Mark Stuart",
+		"email": "mstuart@users.noreply.github.com",
+		"url": "https://github.com/mstuart"
+	},
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./index.d.ts",
+			"default": "./index.js"
+		}
+	},
+	"sideEffects": false,
+	"engines": {
+		"node": ">=20"
+	},
+	"scripts": {
+		"test": "xo && ava && tsd"
+	},
+	"keywords": [
+		"graphql",
+		"cost",
+		"complexity",
+		"analysis",
+		"rate",
+		"limit",
+		"query",
+		"depth",
+		"guard"
+	],
+	"dependencies": {
+		"graphql-hash": "^0.0.0-development"
+	},
+	"peerDependencies": {
+		"graphql": "^16.0.0"
+	},
+	"devDependencies": {
+		"ava": "^6",
+		"graphql": "^16.0.0",
+		"tsd": "^0.31",
+		"xo": "^0.60"
+	},
+	"xo": {
+		"rules": {
+			"@typescript-eslint/naming-convention": "off"
+		}
+	}
+}
