@@ -41,10 +41,10 @@
 		"graphql": "^16.0.0"
 	},
 	"devDependencies": {
-		"ava": "^6",
+		"ava": "^7",
 		"graphql": "^16.0.0",
-		"tsd": "^0.31",
-		"xo": "^0.60"
+		"tsd": "^0.33",
+		"xo": "^1.2"
 	},
 	"xo": {
 		"rules": {
