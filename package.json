@@ -38,13 +38,13 @@
 		"graphql-hash": "^1.0.0"
 	},
 	"peerDependencies": {
-		"graphql": "^16.0.0"
+		"graphql": "^17.0.2"
 	},
 	"devDependencies": {
 		"ava": "^8",
-		"graphql": "^16.0.0",
+		"graphql": "^17.0.2",
 		"tsd": "^0.33",
-		"xo": "^2.0"
+		"xo": "^3.0"
 	},
 	"xo": {
 		"rules": {
