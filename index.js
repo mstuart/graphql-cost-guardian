@@ -53,9 +53,7 @@ export default function analyzeCost(query, options = {}) {
 				const parentType = typeStack.at(-1) ?? 'Unknown';
 				const qualifiedName = `${parentType}.${fieldName}`;
 
-				const hasListType = node.arguments?.some(
-					argument => argument.name.value === 'first' || argument.name.value === 'last' || argument.name.value === 'limit',
-				);
+				const hasListType = node.arguments?.some(argument => argument.name.value === 'first' || argument.name.value === 'last' || argument.name.value === 'limit');
 
 				const depthMultiplier = depthCostFactor === 1 ? 1 : depthCostFactor ** currentDepth;
 				const baseCost = fieldCosts[qualifiedName] ?? defaultCost;
