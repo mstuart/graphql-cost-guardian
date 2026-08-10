@@ -1,26 +1,26 @@
-import {expectType, expectError} from 'tsd';
+import { expectError, expectType } from "tsd";
 import analyzeCost, {
-	createCostMiddleware,
-	CostExceededError,
-	DepthExceededError,
-	type CostAnalysis,
-} from './index.js';
+  type CostAnalysis,
+  CostExceededError,
+  createCostMiddleware,
+  DepthExceededError,
+} from "./index.js";
 
 // AnalyzeCost returns CostAnalysis
-const result = analyzeCost('query { users { name } }');
+const result = analyzeCost("query { users { name } }");
 expectType<CostAnalysis>(result);
 expectType<number>(result.cost);
 expectType<number>(result.depth);
 expectType<Map<string, number>>(result.fields);
 
 // AnalyzeCost with options
-const resultWithOptions = analyzeCost('query { users { name } }', {
-	fieldCosts: {'Query.users': 10},
-	defaultCost: 2,
-	depthCostFactor: 1.5,
-	listCostFactor: 20,
-	maxCost: 100,
-	maxDepth: 5,
+const resultWithOptions = analyzeCost("query { users { name } }", {
+  defaultCost: 2,
+  depthCostFactor: 1.5,
+  fieldCosts: { "Query.users": 10 },
+  listCostFactor: 20,
+  maxCost: 100,
+  maxDepth: 5,
 });
 expectType<CostAnalysis>(resultWithOptions);
 
@@ -41,9 +41,9 @@ const depthAsError: Error = depthError;
 expectType<Error>(depthAsError);
 
 // CreateCostMiddleware
-const middleware = createCostMiddleware({maxCost: 100});
+const middleware = createCostMiddleware({ maxCost: 100 });
 expectType<(query: string) => CostAnalysis>(middleware);
-const middlewareResult = middleware('query { users { name } }');
+const middlewareResult = middleware("query { users { name } }");
 expectType<CostAnalysis>(middlewareResult);
 
 // AnalyzeCost requires query argument

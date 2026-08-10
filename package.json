@@ -1,54 +1,52 @@
 {
-	"name": "graphql-cost-guardian",
-	"version": "1.0.0",
-	"description": "Analyze and limit the cost of GraphQL queries using configurable field costs",
-	"license": "MIT",
-	"repository": "mstuart/graphql-cost-guardian",
-	"author": {
-		"name": "Mark Stuart",
-		"email": "mstuart@users.noreply.github.com",
-		"url": "https://github.com/mstuart"
-	},
-	"type": "module",
-	"exports": {
-		".": {
-			"types": "./index.d.ts",
-			"default": "./index.js"
-		}
-	},
-	"sideEffects": false,
-	"engines": {
-		"node": ">=22"
-	},
-	"scripts": {
-		"test": "xo && ava && tsd"
-	},
-	"keywords": [
-		"graphql",
-		"cost",
-		"complexity",
-		"analysis",
-		"rate",
-		"limit",
-		"query",
-		"depth",
-		"guard"
-	],
-	"dependencies": {
-		"graphql-hash": "^1.0.0"
-	},
-	"peerDependencies": {
-		"graphql": "^16.0.0"
-	},
-	"devDependencies": {
-		"ava": "^8",
-		"graphql": "^16.0.0",
-		"tsd": "^0.33",
-		"xo": "^2.0"
-	},
-	"xo": {
-		"rules": {
-			"@typescript-eslint/naming-convention": "off"
-		}
-	}
+  "name": "graphql-cost-guardian",
+  "version": "1.0.0",
+  "description": "Analyze and limit the cost of GraphQL queries using configurable field costs",
+  "keywords": [
+    "graphql",
+    "cost",
+    "complexity",
+    "analysis",
+    "rate",
+    "limit",
+    "query",
+    "depth",
+    "guard"
+  ],
+  "repository": "mstuart/graphql-cost-guardian",
+  "license": "MIT",
+  "author": {
+    "name": "Mark Stuart",
+    "email": "mstuart@users.noreply.github.com",
+    "url": "https://github.com/mstuart"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "scripts": {
+    "check": "ultracite check",
+    "fix": "ultracite fix",
+    "test": "ava && tsd"
+  },
+  "dependencies": {
+    "graphql-hash": "^1.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.6",
+    "ava": "^8",
+    "graphql": "^16.0.0",
+    "tsd": "^0.33",
+    "ultracite": "7.10.2"
+  },
+  "peerDependencies": {
+    "graphql": "^16.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }

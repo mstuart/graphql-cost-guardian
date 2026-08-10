@@ -1,66 +1,65 @@
-export type AnalyzeCostOptions = {
-	/**
-	Mapping of `TypeName.fieldName` to custom cost values.
-	@default {}
-	*/
-	readonly fieldCosts?: Record<string, number>;
-
-	/**
+export interface AnalyzeCostOptions {
+  /**
 	Default cost per field when not specified in `fieldCosts`.
 	@default 1
 	*/
-	readonly defaultCost?: number;
+  readonly defaultCost?: number;
 
-	/**
+  /**
 	Multiplier applied per nesting depth level.
 	@default 1
 	*/
-	readonly depthCostFactor?: number;
+  readonly depthCostFactor?: number;
+  /**
+	Mapping of `TypeName.fieldName` to custom cost values.
+	@default {}
+	*/
+  readonly fieldCosts?: Record<string, number>;
 
-	/**
+  /**
 	Assumed list size multiplier for fields with list arguments.
 	@default 10
 	*/
-	readonly listCostFactor?: number;
+  readonly listCostFactor?: number;
 
-	/**
+  /**
 	Maximum allowed cost. Throws `CostExceededError` when exceeded.
 	*/
-	readonly maxCost?: number;
+  readonly maxCost?: number;
 
-	/**
+  /**
 	Maximum allowed query depth. Throws `DepthExceededError` when exceeded.
 	*/
-	readonly maxDepth?: number;
-};
+  readonly maxDepth?: number;
+}
 
-export type CostAnalysis = {
-	/** Total computed cost of the query. */
-	readonly cost: number;
+export interface CostAnalysis {
+  /** Total computed cost of the query. */
+  readonly cost: number;
 
-	/** Maximum nesting depth observed. */
-	readonly depth: number;
+  /** Maximum nesting depth observed. */
+  readonly depth: number;
 
-	/** Map of qualified field names to their computed costs. */
-	readonly fields: Map<string, number>;
-};
+  /** Map of qualified field names to their computed costs. */
+  readonly fields: Map<string, number>;
+}
 
 /**
 Error thrown when query cost exceeds the configured maximum.
 */
 export class CostExceededError extends Error {
-	readonly cost: number;
-	readonly maxCost: number;
-	constructor(cost: number, maxCost: number);
+  readonly cost: number;
+  readonly maxCost: number;
+  constructor(cost: number, maxCost: number);
 }
 
 /**
 Error thrown when query depth exceeds the configured maximum.
 */
 export class DepthExceededError extends Error {
-	readonly depth: number;
-	readonly maxDepth: number;
-	constructor(depth: number, maxDepth: number);
+  readonly depth: number;
+  readonly maxDepth: number;
+  constructor(depth: number, maxDepth: number);
 }
 
 /**
@@ -87,7 +86,10 @@ console.log(result.cost);
 // => 3
 ```
 */
-export default function analyzeCost(query: string, options?: AnalyzeCostOptions): CostAnalysis;
+export default function analyzeCost(
+  query: string,
+  options?: AnalyzeCostOptions
+): CostAnalysis;
 
 /**
 Create a reusable cost analysis middleware function.
@@ -103,4 +105,6 @@ const analyze = createCostMiddleware({maxCost: 100, maxDepth: 5});
 const result = analyze('query { users { name } }');
 ```
 */
-export function createCostMiddleware(options: AnalyzeCostOptions): (query: string) => CostAnalysis;
+export function createCostMiddleware(
+  options: AnalyzeCostOptions
+): (query: string) => CostAnalysis;
