@@ -37,14 +37,14 @@
     "graphql-hash": "^1.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.6",
+    "@biomejs/biome": "2.5.7",
     "ava": "^8",
-    "graphql": "^16.0.0",
+    "graphql": "^17.0.2",
     "tsd": "^0.33",
     "ultracite": "7.10.2"
   },
   "peerDependencies": {
-    "graphql": "^16.0.0"
+    "graphql": "^17.0.2"
   },
   "engines": {
     "node": ">=22"
