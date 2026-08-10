@@ -21,7 +21,9 @@
 		"node": ">=22"
 	},
 	"scripts": {
-		"test": "xo && ava && tsd"
+		"test": "ava && tsd",
+		"check": "ultracite check",
+		"fix": "ultracite fix"
 	},
 	"keywords": [
 		"graphql",
@@ -41,14 +43,10 @@
 		"graphql": "^16.0.0"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "2.5.6",
 		"ava": "^8",
 		"graphql": "^16.0.0",
 		"tsd": "^0.33",
-		"xo": "^2.0"
-	},
-	"xo": {
-		"rules": {
-			"@typescript-eslint/naming-convention": "off"
-		}
+		"ultracite": "7.10.2"
 	}
 }
