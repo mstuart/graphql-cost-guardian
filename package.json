@@ -28,6 +28,10 @@
       "default": "./index.js"
     }
   },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "scripts": {
     "check": "ultracite check",
     "fix": "ultracite fix",
