@@ -41,11 +41,11 @@
     "graphql-hash": "^1.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.8",
+    "@biomejs/biome": "2.5.9",
     "ava": "^8",
     "graphql": "^17.0.2",
     "tsd": "^0.33",
-    "ultracite": "7.10.3"
+    "ultracite": "7.10.6"
   },
   "peerDependencies": {
     "graphql": "^17.0.2"
