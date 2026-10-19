@@ -1,3 +1,4 @@
+import { type DocumentNode, parse } from "graphql";
 import { expectError, expectType } from "tsd";
 import analyzeCost, {
   type CostAnalysis,
@@ -42,9 +43,13 @@ expectType<Error>(depthAsError);
 
 // CreateCostMiddleware
 const middleware = createCostMiddleware({ maxCost: 100 });
-expectType<(query: string) => CostAnalysis>(middleware);
+expectType<(query: string | DocumentNode) => CostAnalysis>(middleware);
 const middlewareResult = middleware("query { users { name } }");
 expectType<CostAnalysis>(middlewareResult);
+
+const document = parse("query { users { name } }");
+expectType<CostAnalysis>(analyzeCost(document));
+expectType<CostAnalysis>(middleware(document));
 
 // AnalyzeCost requires query argument
 expectError(analyzeCost());
