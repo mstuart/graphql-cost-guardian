@@ -74,9 +74,9 @@ Analyze the cost of a GraphQL query.
 
 #### query
 
-Type: `string`
+Type: `string | DocumentNode`
 
-A GraphQL query string.
+A GraphQL query string or a parsed `DocumentNode` from `graphql`. Both `analyzeCost` and the function returned by `createCostMiddleware` accept either form.
 
 #### options
 

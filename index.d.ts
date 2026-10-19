@@ -1,3 +1,5 @@
+import type { DocumentNode } from "graphql";
+
 export interface AnalyzeCostOptions {
   /**
 	Default cost per field when not specified in `fieldCosts`.
@@ -87,7 +89,7 @@ console.log(result.cost);
 ```
 */
 export default function analyzeCost(
-  query: string,
+  query: string | DocumentNode,
   options?: AnalyzeCostOptions
 ): CostAnalysis;
 
@@ -107,4 +109,4 @@ const result = analyze('query { users { name } }');
 */
 export function createCostMiddleware(
   options: AnalyzeCostOptions
-): (query: string) => CostAnalysis;
+): (query: string | DocumentNode) => CostAnalysis;
