@@ -82,6 +82,10 @@ A GraphQL query string or a parsed `DocumentNode` from `graphql`. Both `analyzeC
 
 Type: `object`
 
+Cost values and multipliers must be finite, non-negative numbers. Limits must be non-negative numbers; `Infinity` means unbounded. Invalid numeric options throw `TypeError`.
+
+Named fragments are counted at every reachable spread. Fragment wrappers do not add field nesting depth, and unused fragments are ignored.
+
 ##### fieldCosts
 
 Type: `Record<string, number>`\
