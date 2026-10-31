@@ -60,7 +60,7 @@ function createFrame(selectionSet, parentType, depth, maxDepth, fragmentName) {
     fragmentName,
     index: 0,
     parentType,
-    result: { cost: 0, depth, fields: new Map() },
+    result: { children: [], cost: 0, depth, fields: new Map() },
     selections: selectionSet.selections,
   };
 }
@@ -68,16 +68,15 @@ function createFrame(selectionSet, parentType, depth, maxDepth, fragmentName) {
 function mergeResult(target, source) {
   target.cost += source.cost;
   target.depth = Math.max(target.depth, source.depth);
-  for (const [name, cost] of source.fields) {
-    target.fields.set(name, (target.fields.get(name) ?? 0) + cost);
-  }
+  target.children.push(source);
 }
 
-function addField(node, frame, stack, options) {
+function addField(node, frame, stack, options, fieldOrder) {
   const { fieldCosts, defaultCost, depthCostFactor, listCostFactor, maxDepth } =
     options;
   const fieldName = node.name.value;
   const qualifiedName = `${frame.parentType}.${fieldName}`;
+  fieldOrder.add(qualifiedName);
   const hasListType = node.arguments?.some((argument) =>
     ["first", "last", "limit"].includes(argument.name.value)
   );
@@ -136,14 +135,21 @@ function addFragment(node, frame, stack, context) {
   }
 }
 
-function analyzeOperation(operation, options, fragments, fragmentCosts) {
+function analyzeOperation(
+  operation,
+  options,
+  fragments,
+  fragmentCosts,
+  completed,
+  fieldOrder
+) {
   const { maxDepth } = options;
   const activeFragments = new Set();
   const context = { activeFragments, fragmentCosts, fragments, maxDepth };
   const operationType = operation.operation;
   const rootType =
     operationType.charAt(0).toUpperCase() + operationType.slice(1);
-  const result = { cost: 0, depth: 0, fields: new Map() };
+  const result = { children: [], cost: 0, depth: 0, fields: new Map() };
   const stack = [createFrame(operation.selectionSet, rootType, 1, maxDepth)];
   // Explicit frames avoid recursive expansion; memoized fragment summaries are
   // charged at every spread without walking an exponentially expanded document.
@@ -157,6 +163,7 @@ function analyzeOperation(operation, options, fragments, fragmentCosts) {
         activeFragments.delete(frame.fragmentName);
         fragmentCosts.set(`${frame.fragmentName}:${frame.depth}`, frame.result);
       }
+      completed.push(frame.result);
       mergeResult(stack.at(-1)?.result ?? result, frame.result);
       continue;
     }
@@ -172,10 +179,29 @@ function analyzeOperation(operation, options, fragments, fragmentCosts) {
         )
       );
     } else {
-      addField(node, frame, stack, options);
+      addField(node, frame, stack, options, fieldOrder);
     }
   }
+  completed.push(result);
   return result;
+}
+
+function collectFields(completed, root, fieldOrder) {
+  const multiplicities = new Map([[root, 1]]);
+  const fields = new Map();
+  // Completion order puts dependencies first. Reverse it to propagate each
+  // summary's total multiplicity once, including shared diamond dependencies.
+  for (const summary of completed.toReversed()) {
+    const count = multiplicities.get(summary) ?? 0;
+    for (const [name, cost] of summary.fields) {
+      const weighted = cost === 0 ? 0 : cost * count;
+      fields.set(name, (fields.get(name) ?? 0) + weighted);
+    }
+    for (const child of summary.children) {
+      multiplicities.set(child, (multiplicities.get(child) ?? 0) + count);
+    }
+  }
+  return new Map([...fieldOrder].map((name) => [name, fields.get(name)]));
 }
 
 export default function analyzeCost(query, options = {}) {
@@ -203,19 +229,33 @@ export default function analyzeCost(query, options = {}) {
       .map((node) => [node.name.value, node])
   );
   const fragmentCosts = new Map();
-  const result = { cost: 0, depth: 0, fields: new Map() };
+  const completed = [];
+  const fieldOrder = new Set();
+  const result = { children: [], cost: 0, depth: 0, fields: new Map() };
   for (const operation of document.definitions) {
     if (operation.kind === Kind.OPERATION_DEFINITION) {
       mergeResult(
         result,
-        analyzeOperation(operation, normalized, fragments, fragmentCosts)
+        analyzeOperation(
+          operation,
+          normalized,
+          fragments,
+          fragmentCosts,
+          completed,
+          fieldOrder
+        )
       );
     }
   }
   if (normalized.maxCost !== undefined && result.cost > normalized.maxCost) {
     throw new CostExceededError(result.cost, normalized.maxCost);
   }
-  return result;
+  completed.push(result);
+  return {
+    cost: result.cost,
+    depth: result.depth,
+    fields: collectFields(completed, result, fieldOrder),
+  };
 }
 
 export function createCostMiddleware(options) {

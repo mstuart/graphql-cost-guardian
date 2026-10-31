@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import test from "ava";
 import analyzeCost, { CostExceededError } from "./index.js";
 
@@ -94,4 +95,36 @@ test("accepts zero costs and explicit unbounded limits", (t) => {
   });
   t.is(result.cost, 0);
   t.is(result.depth, 2);
+});
+
+test("analyzes a long fragment chain within a bounded heap", (t) => {
+  const script = `
+    import analyzeCost from ${JSON.stringify(new URL("./index.js", import.meta.url).href)};
+    const fragments = ['fragment F0 on Query { f0 }'];
+    for (let i = 1; i < 3000; i += 1) {
+      fragments.push('fragment F' + i + ' on Query { f' + i + ' ...F' + (i - 1) + ' }');
+    }
+    const result = analyzeCost('{ ...F2999 } ' + fragments.join(' '), { maxDepth: 1, maxCost: 3000 });
+    if (result.cost !== 3000 || result.fields.size !== 3000 || result.depth !== 1) {
+      throw new Error('Incorrect fragment-chain accounting');
+    }
+    console.log('ok');
+  `;
+  const output = execFileSync(
+    process.execPath,
+    ["--max-old-space-size=64", "--input-type=module", "-e", script],
+    {
+      encoding: "utf8",
+      timeout: 10_000,
+    }
+  );
+  t.is(output.trim(), "ok");
+});
+
+test("preserves first-encounter field order", (t) => {
+  const result = analyzeCost("{ user { id } other { name } }");
+  t.deepEqual(
+    [...result.fields.keys()],
+    ["Query.user", "User.id", "Query.other", "Other.name"]
+  );
 });
